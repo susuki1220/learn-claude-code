@@ -23,8 +23,8 @@ const portraitClose = document.getElementById("portrait-close")
 // Map configuration - room positions on grid
 const mapLayout = {
   grid: [
-    [null, null, null],
-    [null, null, null],
+    [null, "secret-garden", null],
+    ["underground-lake", "narrow-tunnel", "treasure-room"],
     [null, "cave-entrance", null],
   ],
 }
@@ -130,7 +130,7 @@ function updateTalkButton() {
 // Update take button state
 function updateTakeButton() {
   const hasItems = Object.values(items).some(
-    (item) => item.location === currentRoom,
+    (item) => item.room === currentRoom,
   )
   takeBtn.disabled = !hasItems
 }
@@ -200,6 +200,58 @@ function hidePortrait() {
   portraitContainer.hidden = true
 }
 
+// Map item IDs to portrait IDs
+function getItemPortraitId(itemId) {
+  if (itemId.includes("sword")) return "sword"
+  if (itemId.includes("key")) return "key"
+  if (itemId.includes("potion")) return "potion"
+  if (itemId.includes("torch")) return "torch"
+  if (itemId.includes("gem")) return "gem"
+  return "gem"
+}
+
+// Create an entity icon element
+function createEntityIcon(id, name, type) {
+  const wrapper = document.createElement("div")
+  wrapper.className = "entity-wrapper"
+
+  const icon = document.createElement("div")
+  icon.className = `entity-icon ${type}`
+
+  const art = document.createElement("div")
+  art.className = "entity-icon-art"
+  const pixelArt = generatePixelArt(id, 3)
+  if (pixelArt) {
+    art.style.boxShadow = pixelArt
+  }
+  icon.appendChild(art)
+
+  const label = document.createElement("div")
+  label.className = "entity-label"
+  label.textContent = name.split(" ")[0]
+
+  wrapper.appendChild(icon)
+  wrapper.appendChild(label)
+  return wrapper
+}
+
+// Show items bar with items in current room
+function showItemsBar() {
+  itemsList.innerHTML = ""
+
+  const roomItems = Object.entries(items).filter(
+    ([id, i]) => i.room === currentRoom
+  )
+
+  roomItems.forEach(([id, item]) => {
+    itemsList.appendChild(
+      createEntityIcon(getItemPortraitId(id), item.name, "item")
+    )
+  })
+
+  itemsBar.hidden = roomItems.length === 0
+}
+
 // Update all UI elements
 function updateUI() {
   updateHpBar()
@@ -209,5 +261,6 @@ function updateUI() {
   updateTalkButton()
   updateTakeButton()
   updateMap()
+  showItemsBar()
   enableBasicButtons()
 }
