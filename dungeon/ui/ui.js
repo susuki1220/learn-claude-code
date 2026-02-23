@@ -11,6 +11,10 @@ const inventoryList = document.getElementById("inventory-list")
 const attackBtn = document.getElementById("attack-btn")
 const talkBtn = document.getElementById("talk-btn")
 const takeBtn = document.getElementById("take-btn")
+const encounterBox = document.getElementById("encounter-box")
+const encounterArt = document.getElementById("encounter-art")
+const encounterName = document.getElementById("encounter-name")
+const encounterDesc = document.getElementById("encounter-desc")
 const itemsBar = document.getElementById("items-bar")
 const itemsList = document.getElementById("items-list")
 const pixelMap = document.getElementById("pixel-map")
@@ -235,6 +239,40 @@ function createEntityIcon(id, name, type) {
   return wrapper
 }
 
+// Show encounter box for character or enemy in room
+function showEncounterBox() {
+  const charEntry = Object.entries(characters).find(
+    ([id, c]) => c.location === currentRoom
+  )
+
+  const enemyEntry = Object.entries(enemies).find(
+    ([id, e]) => e.room === currentRoom && e.hp > 0
+  )
+
+  if (charEntry) {
+    const [id, char] = charEntry
+    showEncounter(id, char.name, char.personality, "character")
+  } else if (enemyEntry) {
+    const [id, enemy] = enemyEntry
+    showEncounter(id, enemy.name, `${enemy.hp} HP • ${enemy.damage} damage`, "enemy")
+  } else {
+    encounterBox.hidden = true
+  }
+}
+
+function showEncounter(portraitId, name, desc, type) {
+  const art = generatePixelArt(portraitId, 4)
+  if (art) {
+    encounterArt.style.boxShadow = art
+  } else {
+    encounterArt.style.boxShadow = "none"
+  }
+  encounterName.textContent = name
+  encounterDesc.textContent = desc
+  encounterBox.hidden = false
+  encounterBox.className = `encounter-box pixel-box ${type}`
+}
+
 // Show items bar with items in current room
 function showItemsBar() {
   itemsList.innerHTML = ""
@@ -261,6 +299,7 @@ function updateUI() {
   updateTalkButton()
   updateTakeButton()
   updateMap()
+  showEncounterBox()
   showItemsBar()
   enableBasicButtons()
 }

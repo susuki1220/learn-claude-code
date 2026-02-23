@@ -63,6 +63,7 @@ function processCommand(input) {
     print("  go [direction] - Move (up, down, left, right)")
     print("  take [item] - Pick up an item")
     print("  inventory - Show your inventory")
+    print("  attack - Attack an enemy in the room")
     return
   }
 
@@ -76,6 +77,13 @@ function processCommand(input) {
         .map(([id, item]) => item.name)
       if (roomItems.length > 0) {
         print(`Items: ${roomItems.join(", ")}`)
+      }
+
+      const roomEnemies = Object.entries(enemies)
+        .filter(([id, enemy]) => enemy.room === currentRoom && enemy.hp > 0)
+        .map(([id, enemy]) => `${enemy.name} (${enemy.hp} hp)`)
+      if (roomEnemies.length > 0) {
+        print(`Enemies: ${roomEnemies.join(", ")}`)
       }
 
       const exitList = Object.keys(room.exits).join(", ")
@@ -94,6 +102,11 @@ function processCommand(input) {
 
   if (command === "inventory" || command === "inv") {
     showInventory()
+    return
+  }
+
+  if (command === "attack") {
+    attack()
     return
   }
 
@@ -124,6 +137,13 @@ function goDirection(direction) {
         .map(([id, item]) => item.name)
       if (roomItems.length > 0) {
         print(`Items: ${roomItems.join(", ")}`)
+      }
+
+      const roomEnemies = Object.entries(enemies)
+        .filter(([id, enemy]) => enemy.room === currentRoom && enemy.hp > 0)
+        .map(([id, enemy]) => `${enemy.name} (${enemy.hp} hp)`)
+      if (roomEnemies.length > 0) {
+        print(`Enemies: ${roomEnemies.join(", ")}`)
       }
 
       const exitList = Object.keys(newRoom.exits).join(", ")
@@ -172,6 +192,55 @@ function showInventory() {
     const carried = inventory.map((id) => items[id].name).join(", ")
     print(`You are carrying: ${carried}`)
   }
+}
+
+// ============ COMBAT SYSTEM ============
+
+function attack() {
+  // Find enemy in current room with hp > 0
+  const entry = Object.entries(enemies).find(
+    ([id, enemy]) => enemy.room === currentRoom && enemy.hp > 0,
+  )
+
+  if (!entry) {
+    print("There's nothing to attack here.", "error")
+    return
+  }
+
+  const [id, enemy] = entry
+
+  // Check for weapon damage bonus
+  const weapon = inventory.find((itemId) => items[itemId].damage)
+  const playerDamage = weapon ? items[weapon].damage : 5
+
+  // Player attacks
+  enemy.hp -= playerDamage
+  print(`You attack the ${enemy.name} for ${playerDamage} damage!`, "combat")
+
+  if (enemy.hp <= 0) {
+    print(`The ${enemy.name} is defeated!`, "success")
+    enemy.room = null
+    updateAttackButton()
+    showEncounterBox()
+    return
+  }
+
+  print(`The ${enemy.name} has ${enemy.hp} hp left.`, "combat")
+
+  // Enemy attacks back
+  playerHp -= enemy.damage
+  print(`The ${enemy.name} attacks you for ${enemy.damage} damage!`, "combat")
+
+  updateHpBar()
+
+  if (playerHp <= 0) {
+    print("You have been slain. Game over.", "error")
+    print("Refresh to restart.")
+    commandInput.disabled = true
+    return
+  }
+
+  print(`You have ${playerHp} hp left.`, "combat")
 }
 
 // ============ EVENT HANDLERS ============
