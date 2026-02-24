@@ -55,6 +55,26 @@ function processCommand(input) {
   // Echo the command
   print(`> ${input}`, "command")
 
+  // Dialogue mode — route input to NPC conversation
+  if (talkingTo) {
+    if (command === "leave" || command === "bye" || command === "goodbye") {
+      leaveConversation()
+      return
+    }
+    // Allow movement to also exit conversation
+    if (command.startsWith("go ") || ["up", "down", "left", "right"].includes(command)) {
+      leaveConversation()
+      if (command.startsWith("go ")) {
+        goDirection(command.slice(3).trim())
+      } else {
+        goDirection(command)
+      }
+      return
+    }
+    sayTo(input.trim())
+    return
+  }
+
   // Handle commands
   if (command === "help") {
     print("Available commands:")
@@ -63,6 +83,7 @@ function processCommand(input) {
     print("  go [direction] - Move (up, down, left, right)")
     print("  take [item] - Pick up an item")
     print("  inventory - Show your inventory")
+    print("  talk [name] - Talk to a character")
     print("  attack - Attack an enemy in the room")
     return
   }
@@ -107,6 +128,12 @@ function processCommand(input) {
 
   if (command === "attack") {
     attack()
+    return
+  }
+
+  if (command === "talk" || command.startsWith("talk ")) {
+    const name = command === "talk" ? "" : command.slice(5)
+    talk(name)
     return
   }
 
@@ -241,6 +268,71 @@ function attack() {
   }
 
   print(`You have ${playerHp} hp left.`, "combat")
+}
+
+// ============ DIALOGUE SYSTEM ============
+
+function talk(name) {
+  // Find NPC in current room
+  let entry
+  if (name === "") {
+    entry = Object.entries(characters).find(
+      ([id, c]) => c.location === currentRoom,
+    )
+  } else {
+    entry = Object.entries(characters).find(
+      ([id, c]) =>
+        c.location === currentRoom &&
+        c.name.toLowerCase().includes(name.toLowerCase()),
+    )
+  }
+
+  if (!entry) {
+    print("There's no one here to talk to.", "error")
+    return
+  }
+
+  const [id, npc] = entry
+  talkingTo = npc.name
+  talkingToId = id
+  showPortrait(id)
+  print(`${npc.name}: "${npc.greeting}"`, "npc")
+  print('(Type to chat, or "leave" to walk away)', "hint")
+}
+
+function leaveConversation() {
+  if (talkingTo) {
+    print(`You end your conversation with ${talkingTo}.`)
+    talkingTo = null
+    talkingToId = null
+    hidePortrait()
+  }
+}
+
+async function sayTo(message) {
+  print("...", "hint")
+  try {
+    const response = await fetch("/api/talk", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ character: talkingToId, message }),
+    })
+    const data = await response.json()
+    // Remove the "..." loading indicator
+    const output = document.getElementById("output")
+    const lastLine = output.lastElementChild
+    if (lastLine && lastLine.textContent === "...") {
+      output.removeChild(lastLine)
+    }
+    print(`${talkingTo}: "${data.response}"`, "npc")
+  } catch (err) {
+    const output = document.getElementById("output")
+    const lastLine = output.lastElementChild
+    if (lastLine && lastLine.textContent === "...") {
+      output.removeChild(lastLine)
+    }
+    print(`${talkingTo} stares at you blankly.`, "npc")
+  }
 }
 
 // ============ EVENT HANDLERS ============

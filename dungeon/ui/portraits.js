@@ -7,6 +7,7 @@ const pixelColors = {
   wizard: { 1: '#e8b88a', 2: '#4a3b7c', 3: '#6b5b9a', 4: '#ffffff', 5: '#8b7355' },
   dwarf: { 1: '#e8b88a', 2: '#8b5a2b', 3: '#a0522d', 4: '#ffffff', 5: '#666666' },
   thief: { 1: '#e8b88a', 2: '#2a2a2a', 3: '#444444', 4: '#ffffff', 5: '#1a1a1a' },
+  elf: { 1: '#f0d9c0', 2: '#1a4a5c', 3: '#2e8b9a', 4: '#ffffff', 5: '#7ec8c8' },
   // Header mascots
   princess: { 1: '#e8b88a', 2: '#da7756', 3: '#c25d3a', 4: '#ffffff', 5: '#daa520', 6: '#8b4513' },
   robot: { 1: '#da7756', 2: '#444444', 3: '#666666', 4: '#88ccff', 5: '#333333', 6: '#da7756' },

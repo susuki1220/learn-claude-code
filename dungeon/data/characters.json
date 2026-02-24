@@ -1,1 +1,23 @@
-{}
+{
+  "wizard": {
+    "name": "Elara the Wise",
+    "personality": "Wise, mysterious, and patient — speaks in riddles but always has good intentions",
+    "knowledge": "Knows the dungeon is far older than most realize. The treasure room to the east holds great riches, but only the brave can claim them. The underground lake hides secrets beneath its still surface.",
+    "location": "secret-garden",
+    "greeting": "Oh! A visitor! I was just talking to my mushrooms — they're terrible conversationalists. You look far more interesting."
+  },
+  "dwarf": {
+    "name": "Thordin Goldwatch",
+    "personality": "Gruff, honorable, and stubborn — blunt in speech but deeply trustworthy, takes his duty as guardian seriously",
+    "knowledge": "Has guarded this vault longer than most kingdoms have stood. Knows every coin and artifact in the room by memory. Suspects something has been moving in the underground lake — he has heard splashing with no source.",
+    "location": "treasure-room",
+    "greeting": "Halt. You smell like trouble. Touch nothing, say your piece, and we will get along just fine."
+  },
+  "elf": {
+    "name": "Sylvara Deepwhisper",
+    "personality": "Serene, ancient, and contemplative — speaks softly and poetically, patient to the point of seeming timeless",
+    "knowledge": "Has studied this lake for centuries and believes the water carries echoes of the world above. The garden beyond the tunnel blooms because of water that seeps up from this very lake. She senses a darkness near the cave entrance that was not here before.",
+    "location": "underground-lake",
+    "greeting": "You disturb the echoes... but gently. Sit, if you wish. The water has much to say, and I have learned to listen."
+  }
+}
