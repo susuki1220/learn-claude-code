@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(cd:*)",
+      "Bash(cd C:\\\\Users\\\\Eddie\\\\projects\\\\learn-claude-code\\\\dungeon:*)",
+      "Bash(true:*)"
+    ]
+  }
+}
