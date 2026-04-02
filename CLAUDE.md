@@ -102,3 +102,5 @@ Understanding the game's UI structure helps when adding features. Here's the com
 | Portrait Display | `#portrait-container`                | `showPortrait()`, `hidePortrait()` |
 | Terminal Output  | `#output`                            | `print(text, className)`           |
 | Command Input    | `#command`                           | N/A (user input)                   |
+
+⚓

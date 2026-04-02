@@ -64,3 +64,5 @@ Row 0 is the top (north/up), row 2 is the bottom (south/down). Columns go left t
 
 - Arrow keys (ArrowUp/Down/Left/Right) for movement
 - Do NOT add WASD support — it interferes with text input
+
+⚓
